@@ -120,7 +120,7 @@ ports: - "3000:3000"
 
 Dockerfile を修正して、React プロジェクトを直接作成:
 
-dockerfileCopyFROM node:14
+dockerfileCopyFROM node:18
 
 WORKDIR /app
 
