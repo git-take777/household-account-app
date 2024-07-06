@@ -69,9 +69,9 @@ http://localhost
 
 ## Tips
 
-- Read this [Taskfile](https://github.com/ucan-lab/docker-laravel/blob/main/Taskfile.yml).
-- Read this [Makefile](https://github.com/ucan-lab/docker-laravel/blob/main/Makefile).
-- Read this [Wiki](https://github.com/ucan-lab/docker-laravel/wiki).
+-   Read this [Taskfile](https://github.com/ucan-lab/docker-laravel/blob/main/Taskfile.yml).
+-   Read this [Makefile](https://github.com/ucan-lab/docker-laravel/blob/main/Makefile).
+-   Read this [Wiki](https://github.com/ucan-lab/docker-laravel/wiki).
 
 ## Container structures
 
@@ -83,21 +83,61 @@ http://localhost
 
 ### app container
 
-- Base image
-  - [php](https://hub.docker.com/_/php):8.3-fpm-bullseye
-  - [composer](https://hub.docker.com/_/composer):2.7
+-   Base image
+    -   [php](https://hub.docker.com/_/php):8.3-fpm-bullseye
+    -   [composer](https://hub.docker.com/_/composer):2.7
 
 ### web container
 
-- Base image
-  - [nginx](https://hub.docker.com/_/nginx):1.25
+-   Base image
+    -   [nginx](https://hub.docker.com/_/nginx):1.25
 
 ### db container
 
-- Base image
-  - [mysql/mysql-server](https://hub.docker.com/r/mysql/mysql-server):8.0
+-   Base image
+    -   [mysql/mysql-server](https://hub.docker.com/r/mysql/mysql-server):8.0
 
 ### mailpit container
 
-- Base image
-  - [axllent/mailpit](https://hub.docker.com/r/axllent/mailpit)
+-   Base image
+    -   [axllent/mailpit](https://hub.docker.com/r/axllent/mailpit)
+
+<!-- 補足 -->
+<!-- src/frontendにReactPJTが作成されない場合の対処法; -->
+
+ボリュームマウントを一時的に無効にする:
+docker-compose.yml の frontend サービスからボリュームマウントを削除します。
+
+yamlCopyfrontend:
+build:
+context: ./docker/frontend
+dockerfile: Dockerfile
+ports: - "3000:3000"
+
+# volumes:
+
+# - ./src/frontend:/app
+
+Dockerfile を修正して、React プロジェクトを直接作成:
+
+dockerfileCopyFROM node:14
+
+WORKDIR /app
+
+RUN npx create-react-app .
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
+
+コンテナをビルドし直して実行:
+
+bashCopydocker-compose down
+docker-compose build --no-cache
+docker-compose up -d
+
+コンテナ内でプロジェクトが作成されたことを確認:
+
+bashCopydocker-compose exec frontend ls -la
+
+プロジェクトファイルをホストマシンにコピー:
